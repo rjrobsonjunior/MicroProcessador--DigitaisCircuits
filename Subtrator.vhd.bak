@@ -1,0 +1,42 @@
+library ieee ;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
+use IEEE.numeric_std.all;
+use ieee.std_logic_arith.all;
+
+----------------------------------------------------
+
+entity FullAdder is
+
+port(	
+        A, B: in std_logic_vector (7 downto 0); -- A is from Accumulator and B is from B reigister
+        Su: in std_logic;
+        Result: out std_logic_vector (7 downto 0); -- Result is To bus
+        Cout: out std_logic
+);
+end FullAdder;
+
+----------------------------------------------------
+
+architecture behv of FullAdder is
+
+    signal C: std_logic_vector ( 8 downto 0);
+    signal CinxB: std_logic_vector (7 downto 0);
+    signal S: std_logic_vector (7 downto 0);
+
+    begin
+
+        loop1: for item in 0 to 7 loop 
+            CinxB(item) <= B(item) xor Su;
+        end loop;
+            
+        C(0) <= Su;
+
+        loop2: for item in 0 to 7 loop 
+            S(item) <= (A(item) xor CinxB(item)) xor C(item);
+            C(item+1) <= (A(item) and CinxB(item)) or (C(item) and (A(item) xor CinxB(item)));
+        end loop;
+
+        Cout <= C(8);
+
+end behv;

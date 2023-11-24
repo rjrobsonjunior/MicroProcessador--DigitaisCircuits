@@ -1,0 +1,29 @@
+-- Subtrator de oito bits em VHDL
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+entity Subtractor is
+    port (
+        A, B : in  std_logic_vector(7 downto 0);
+        BorrowIn : in std_logic;
+        Difference : out std_logic_vector(7 downto 0);
+        BorrowOut : out std_logic
+    );
+end entity Subtractor;
+
+architecture Behavioral of Subtractor is
+begin
+    Subtraction_Process: process(A, B, BorrowIn)
+        variable temp_result : signed(7 downto 0);
+    begin
+        temp_result := signed(A) - signed(B) - signed(BorrowIn);
+        Difference <= std_logic_vector(temp_result);
+        
+        if temp_result < 0 then
+            BorrowOut <= '1';
+        else
+            BorrowOut <= '0';
+        end if;
+    end process Subtraction_Process;
+end architecture Behavioral;

@@ -6,7 +6,7 @@ entity InstructionDecoder is
 port ( 
     I0, I2, I2, I3: in std_logic;
     LOAD, ADD, SUB, ANDlogic, XORlogic, OUTPUTs, HALT: out std_logic;
-);
+);  
 end InstructionDecoder;
 
 architecture Behavioral of InstructionDecoder is 
