@@ -10,37 +10,36 @@ entity FullAdder8bits is
         Result: out std_logic_vector(7 downto 0);
         Cout: out std_logic
     );
-end FullAdder8bits;
+end entity FullAdder8bits;
 
 architecture behv of FullAdder8bits is
     signal C: std_logic_vector(8 downto 0) := (others => '0');
     signal CinxB: std_logic_vector(7 downto 0) := (others => '0');
     signal S: std_logic_vector(7 downto 0) := (others => '0');
 begin
+
     process(Eu)
     begin
-        if rising_edge(Eu) then
-		  
-            for item in 0 to 7 loop 
-                CinxB(item) <= B(item) xor Su;
-            end loop;
+        if Eu = '1' then
+				 for i in 0 to 7 loop 
+					  CinxB(i) <= B(i) xor Su;
+				 end loop;
 
-            C(0) <= Su;
+				 C(0) <= Su;
 
-            for item in 0 to 7 loop 
-                S(item) <= (std_logic(A(item)) xor CinxB(item)) xor C(item);
-                C(item+1) <= (std_logic(A(item)) and CinxB(item)) or (C(item) and (std_logic(A(item)) xor CinxB(item)));
-            end loop; 
+				 for item in 0 to 7 loop 
+					  S(item) <= (std_logic(A(item)) xor CinxB(item)) xor C(item);
+					  C(item+1) <= (std_logic(A(item)) and CinxB(item)) or (C(item) and (std_logic(A(item)) xor CinxB(item)));
+				 end loop; 
 
-            Cout <= C(8);
-            
-            if Eu = '1' then
-                Result <= S;
-            elsif Eu = '0' then
-                Result <= (others => 'Z');
-            end if;
-        end if;
+				 Cout <= C(8);
+				 Result <= S;
+			else
+				 Result <= (others => 'Z');
+				 Cout <= 'Z';
+			end if;
     end process;
 end behv;
+
 
 
