@@ -4,11 +4,9 @@ use ieee.numeric_std.all;
 
 entity FullAdder8bits is
     port (
-        Eu: in std_logic;
         A, B: in std_logic_vector(7 downto 0);
         Su: in std_logic;
         Result: out std_logic_vector(7 downto 0);
-        Cout: out std_logic
     );
 end entity FullAdder8bits;
 
@@ -18,27 +16,20 @@ architecture behv of FullAdder8bits is
     signal S: std_logic_vector(7 downto 0) := (others => '0');
 begin
 
-    process(Eu)
-    begin
-        if Eu = '1' then
-				 for i in 0 to 7 loop 
-					  CinxB(i) <= B(i) xor Su;
-				 end loop;
+    for i in 0 to 7 loop 
+        CinxB(i) <= B(i) xor Su;
+    end loop;
 
-				 C(0) <= Su;
+    C(0) <= Su;
 
-				 for item in 0 to 7 loop 
-					  S(item) <= (std_logic(A(item)) xor CinxB(item)) xor C(item);
-					  C(item+1) <= (std_logic(A(item)) and CinxB(item)) or (C(item) and (std_logic(A(item)) xor CinxB(item)));
-				 end loop; 
+    for item in 0 to 7 loop 
+        S(item) <= (std_logic(A(item)) xor CinxB(item)) xor C(item);
+        C(item+1) <= (std_logic(A(item)) and CinxB(item)) or (C(item) and (std_logic(A(item)) xor CinxB(item)));
+    end loop; 
 
-				 Cout <= C(8);
-				 Result <= S;
-			else
-				 Result <= (others => 'Z');
-				 Cout <= 'Z';
-			end if;
-    end process;
+    
+    Result <= S;
+
 end behv;
 
 

@@ -65,18 +65,29 @@ architecture MicroProcessador_arch of MicroProcessador is
 	);
 END component;
 
+	component SaveStay is 
+    port(
+    clk, stop : in std_logic;
+    s : out std_logic
+    );
+	end component;
+
+
 -- ================COMPONENT--END==================================--
 
 signal sCounter : std_logic_vector(2 downto 0);
 signal sAdress : std_logic_vector(3 downto 0);
 signal sRom : std_logic_vector( 15 downto 0);
 --signal sAdressRom : std_logic_vector (4 downto 0);
-
+signal CLKstop : std_logic;
+signal Cp,Ep,Lm,CE, Li, Ei,La,Ea,Su,Eu,Lb,Lo, HALT: std_logic;
+signal RAMoutput: std_logic_vector (7 downto 0);
 --BEGIN--
 	begin
 	
 	-- =========PROGRAM COUNTER================== --
-	CouterState: Counter3bits06 port map( CLKboard, RESETboard, sCounter);
+	saveState : saveStay port map ( CLKboard, STOPboard, CLKstop);
+	CouterState: Counter3bits06 port map( CLKstop, RESETboard, sCounter);
 	CouterAdress:Counter4bits port map(sCounter(2), RESETboard, sAdress);
 	Hex0counter <= sAdress; 
 	RomMemory : ROMoneport port map( sAdress, sCounter(2), sRom);

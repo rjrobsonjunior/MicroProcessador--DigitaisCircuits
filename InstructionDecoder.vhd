@@ -4,19 +4,18 @@ use iee.std_logic_unsigment.all;
 
 entity InstructionDecoder is 
 port ( 
-    I0, I2, I2, I3: in std_logic;
-    LOAD, ADD, SUB, ANDlogic, XORlogic, OUTPUTs, HALT: out std_logic;
+    instrucution: in std_logic_vector( 3 downto 0);
+    LOAD, ADD, SUB, ANDlogic, XORlogic, HALT: out std_logic;
 );  
 end InstructionDecoder;
 
-architecture Behavioral of InstructionDecoder is 
-    LOAD <=  I0 and  I1 and (not I2) and I3 ;
-    ADD <=    I0 and (not I1) and  I2 and (not I3) ;
-    SUB <=   I0 and I1 and I2 and (not I3) ;
-    ANDlogic <=  (not I0) and (not I1)  and I2 and I3;
-    XORlogic <=  (not I0) and I1 and (not I2) and I3;
-    OUTPUTs <=  (not I0) and (not I1) and (not I2)  and (not I3) ;
-    HALT <=  I0 and I1 and (not I2) and I3;
+architecture arch_InstructionDecoder of InstructionDecoder is 
+    LOAD <= instruction(0) and  instruction(1) and (not instruction(2)) and instruction(3) ;                        -- 0xB 1011
+    ADD <=   instruction(0) and (not instruction(1)) and  instruction(2) and (not instruction(3)) ;                 -- 0x5 0101
+    SUB <=  instruction(0) and instruction(1) and instruction(2) and (not instruction(3)) ;                         -- 0x7 0111
+    ANDlogic <=  (not instruction(0)) and (not instruction(1))  and instruction(2) and instruction(3);              --0xC 1100
+    XORlogic <=  (not instruction(0)) and instruction(1) and (not instruction(2)) and instruction(3);               --0xA 1010
+    HALT <= (not instruction(0)) and (not instruction(1)) and  instruction(2) and (not instruction(3));             --0x4 0100
 begin
 
-end Behavioral;
+end arch_InstructionDecoder;

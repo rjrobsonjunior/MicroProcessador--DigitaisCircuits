@@ -1,5 +1,5 @@
 library ieee;
-use iee.std_logic_1164.all;
+use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity Counter4bits is 
@@ -9,7 +9,7 @@ entity Counter4bits is
     );
 end Counter4bits;
 
-architecture Counter8bits_arch of Counter8bits is 
+architecture Counter4bits_arch of Counter4bits is 
 
 	component tff is 
 	port    (
@@ -28,7 +28,7 @@ architecture Counter8bits_arch of Counter8bits is
 		
 			a00: tff
 			port map	(
-				T=>'1' ,PRN=>'1' , CLRN=> clrn  , CLK=> not Ti_Qiis(i) ,
+				T=>'1' ,PRN=>'1' , CLRN=> reset  , CLK=> not Ti_Qiis(i) ,
 				Q=>Ti_Qiis(i+1)
 				);
 			
@@ -37,6 +37,6 @@ architecture Counter8bits_arch of Counter8bits is
 		end generate;
 
 		Ti_Qiis(0)<= not clk_s;
-		Q<=Q_s;
+		S<=Q_s;
 		clk_s<=clk;
-	end Counter8bits_arch;
+	end Counter4bits_arch;
