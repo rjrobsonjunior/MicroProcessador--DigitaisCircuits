@@ -46,9 +46,6 @@ set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
 set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
 set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
 set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 256
-set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
-set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
-set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 set_global_assignment -name ENABLE_OCT_DONE ON
@@ -60,15 +57,80 @@ set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -rise
 set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -fall
 set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -rise
 set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -fall
-set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_location_assignment PIN_B11 -to LEDcounter[3]
+set_location_assignment PIN_A11 -to LEDcounter[2]
+set_location_assignment PIN_D14 -to LEDcounter[1]
+set_location_assignment PIN_E14 -to LEDcounter[0]
+set_location_assignment PIN_B8 -to RESETboard
+set_location_assignment PIN_A7 -to STOPboard
+set_location_assignment PIN_C14 -to Hex0Rom[6]
+set_location_assignment PIN_E15 -to Hex0Rom[5]
+set_location_assignment PIN_C15 -to Hex0Rom[4]
+set_location_assignment PIN_C16 -to Hex0Rom[3]
+set_location_assignment PIN_E16 -to Hex0Rom[2]
+set_location_assignment PIN_D17 -to Hex0Rom[1]
+set_location_assignment PIN_C17 -to Hex0Rom[0]
+set_location_assignment PIN_C18 -to Hex1Rom[6]
+set_location_assignment PIN_D18 -to Hex1Rom[5]
+set_location_assignment PIN_E18 -to Hex1Rom[4]
+set_location_assignment PIN_B16 -to Hex1Rom[3]
+set_location_assignment PIN_A17 -to Hex1Rom[2]
+set_location_assignment PIN_A18 -to Hex1Rom[1]
+set_location_assignment PIN_B17 -to Hex1Rom[0]
+set_location_assignment PIN_B20 -to Hex2Ram[6]
+set_location_assignment PIN_A20 -to Hex2Ram[5]
+set_location_assignment PIN_B19 -to Hex2Ram[4]
+set_location_assignment PIN_A21 -to Hex2Ram[3]
+set_location_assignment PIN_B21 -to Hex2Ram[2]
+set_location_assignment PIN_C22 -to Hex2Ram[1]
+set_location_assignment PIN_B22 -to Hex2Ram[0]
+set_location_assignment PIN_F21 -to Hex3Ram[6]
+set_location_assignment PIN_E22 -to Hex3Ram[5]
+set_location_assignment PIN_E21 -to Hex3Ram[4]
+set_location_assignment PIN_C19 -to Hex3Ram[3]
+set_location_assignment PIN_C20 -to Hex3Ram[2]
+set_location_assignment PIN_D19 -to Hex3Ram[1]
+set_location_assignment PIN_E17 -to Hex3Ram[0]
+set_location_assignment PIN_F18 -to Hex4Arithmetic[6]
+set_location_assignment PIN_E20 -to Hex4Arithmetic[5]
+set_location_assignment PIN_E19 -to Hex4Arithmetic[4]
+set_location_assignment PIN_J18 -to Hex4Arithmetic[3]
+set_location_assignment PIN_H19 -to Hex4Arithmetic[2]
+set_location_assignment PIN_F19 -to Hex4Arithmetic[1]
+set_location_assignment PIN_F20 -to Hex4Arithmetic[0]
+set_location_assignment PIN_J20 -to Hex5Arithmetic[6]
+set_location_assignment PIN_K20 -to Hex5Arithmetic[5]
+set_location_assignment PIN_L18 -to Hex5Arithmetic[4]
+set_location_assignment PIN_N18 -to Hex5Arithmetic[3]
+set_location_assignment PIN_M20 -to Hex5Arithmetic[2]
+set_location_assignment PIN_N19 -to Hex5Arithmetic[1]
+set_location_assignment PIN_N20 -to Hex5Arithmetic[0]
+set_location_assignment PIN_N14 -to CLKboard
+set_location_assignment PIN_A8 -to LEDinstruction[0]
+set_location_assignment PIN_A9 -to LEDinstruction[1]
+set_location_assignment PIN_A10 -to LEDinstruction[2]
+set_location_assignment PIN_B10 -to LEDinstruction[3]
+set_global_assignment -name VHDL_FILE StateMachine3bits04.vhd
+set_global_assignment -name VHDL_FILE ArithmeticUnit.vhd
 set_global_assignment -name VHDL_FILE InstructionDecoder.vhd
 set_global_assignment -name VHDL_FILE FullAdder8bits.vhd
 set_global_assignment -name VHDL_FILE MicroProcessador.vhd
 set_global_assignment -name QIP_FILE ram.qip
-set_global_assignment -name VECTOR_WAVEFORM_FILE Waveform.vwf
 set_global_assignment -name QIP_FILE ROM.qip
 set_global_assignment -name VHDL_FILE CouterAsync4bits.vhd
 set_global_assignment -name VHDL_FILE CouterAsync3bits0_6.vhd
 set_global_assignment -name QIP_FILE ROMoneport.qip
 set_global_assignment -name VHDL_FILE saveStay.vhd
-set_global_assignment -name VHDL_FILE RingCounter.vhd
+set_global_assignment -name VHDL_FILE XORoperation.vhd
+set_global_assignment -name VHDL_FILE ANDoperation.vhd
+set_global_assignment -name VHDL_FILE ORoperation.vhd
+set_global_assignment -name VHDL_FILE AccumulatorFFD.vhd
+set_global_assignment -name VHDL_FILE TimingReference.vhd
+set_global_assignment -name VHDL_FILE CounterAsync5bits.vhd
+set_global_assignment -name VECTOR_WAVEFORM_FILE Waveform1.vwf
+set_global_assignment -name VHDL_FILE ConversorDisplay7seg.vhd
+set_global_assignment -name QIP_FILE RamMicro.qip
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

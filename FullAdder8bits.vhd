@@ -6,7 +6,7 @@ entity FullAdder8bits is
     port (
         A, B: in std_logic_vector(7 downto 0);
         Su: in std_logic;
-        Result: out std_logic_vector(7 downto 0);
+        Result: out std_logic_vector(7 downto 0)
     );
 end entity FullAdder8bits;
 
@@ -16,16 +16,16 @@ architecture behv of FullAdder8bits is
     signal S: std_logic_vector(7 downto 0) := (others => '0');
 begin
 
-    for i in 0 to 7 loop 
+    aa:for i in 0 to 7 generate 
         CinxB(i) <= B(i) xor Su;
-    end loop;
+    end generate aa;
 
     C(0) <= Su;
 
-    for item in 0 to 7 loop 
+    bb:for item in 0 to 7 generate 
         S(item) <= (std_logic(A(item)) xor CinxB(item)) xor C(item);
         C(item+1) <= (std_logic(A(item)) and CinxB(item)) or (C(item) and (std_logic(A(item)) xor CinxB(item)));
-    end loop; 
+    end generate bb; 
 
     
     Result <= S;

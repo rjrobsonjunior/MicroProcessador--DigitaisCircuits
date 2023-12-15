@@ -4,7 +4,7 @@
 -- MODULE: altsyncram 
 
 -- ============================================================
--- File Name: ram.vhd
+-- File Name: RamMicro.vhd
 -- Megafunction Name(s):
 -- 			altsyncram
 --
@@ -39,7 +39,7 @@ USE ieee.std_logic_1164.all;
 LIBRARY altera_mf;
 USE altera_mf.altera_mf_components.all;
 
-ENTITY ram IS
+ENTITY RamMicro IS
 	PORT
 	(
 		address		: IN STD_LOGIC_VECTOR (3 DOWNTO 0);
@@ -48,10 +48,10 @@ ENTITY ram IS
 		wren		: IN STD_LOGIC ;
 		q		: OUT STD_LOGIC_VECTOR (7 DOWNTO 0)
 	);
-END ram;
+END RamMicro;
 
 
-ARCHITECTURE SYN OF ram IS
+ARCHITECTURE SYN OF rammicro IS
 
 	SIGNAL sub_wire0	: STD_LOGIC_VECTOR (7 DOWNTO 0);
 
@@ -148,9 +148,9 @@ END SYN;
 -- Retrieval info: CONNECT: @data_a 0 0 8 0 data 0 0 8 0
 -- Retrieval info: CONNECT: @wren_a 0 0 0 0 wren 0 0 0 0
 -- Retrieval info: CONNECT: q 0 0 8 0 @q_a 0 0 8 0
--- Retrieval info: GEN_FILE: TYPE_NORMAL ram.vhd TRUE
--- Retrieval info: GEN_FILE: TYPE_NORMAL ram.inc TRUE
--- Retrieval info: GEN_FILE: TYPE_NORMAL ram.cmp TRUE
--- Retrieval info: GEN_FILE: TYPE_NORMAL ram.bsf TRUE
--- Retrieval info: GEN_FILE: TYPE_NORMAL ram_inst.vhd TRUE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL RamMicro.vhd TRUE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL RamMicro.inc FALSE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL RamMicro.cmp TRUE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL RamMicro.bsf FALSE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL RamMicro_inst.vhd TRUE
 -- Retrieval info: LIB_FILE: altera_mf

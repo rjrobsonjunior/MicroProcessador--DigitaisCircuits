@@ -5,12 +5,14 @@ use IEEE.numeric_std.ALL;
 entity MicroProcessador is
 	port(
 		CLKboard, RESETboard, STOPboard: in std_logic;
-      Hex0counter: out std_logic_vector(3 downto 0);
-		Hex1instruction: out std_logic_vector(3 downto 0);
-		Hex2adress: out std_logic_vector(3 downto 0);
-		Hex3data0: out std_logic_vector(3 downto 0);
-		Hex4data1: out std_logic_vector(3 downto 0);
-		Hex5accumulator0: out std_logic_vector(3 downto 0)
+      LEDcounter: out std_logic_vector(3 downto 0);
+		LEDinstruction: out std_logic_vector(3 downto 0);
+		Hex0Rom: out std_logic_vector(6 downto 0);
+		Hex1Rom: out std_logic_vector(6 downto 0);
+		Hex2Ram: out std_logic_vector(6 downto 0);
+		Hex3Ram: out std_logic_vector(6 downto 0);
+		Hex4Arithmetic: out std_logic_vector(6 downto 0);
+		Hex5Arithmetic: out std_logic_vector(6 downto 0)
 	);
 end entity MicroProcessador;
 
@@ -18,13 +20,20 @@ architecture MicroProcessador_arch of MicroProcessador is
 
 -- ===============BEGIN COMPONENTS========================= --
 	
-	
-	component Counter3bits06 is 
-    port(
-    clk, reset : in std_logic;
-    S : out std_logic_vector ( 2 downto 0)
-    );
+	component ConversorDisplay7seg is
+	port (
+		x: in std_logic_vector(3 downto 0);
+		seg: out std_logic_vector(6 downto 0)
+		);
 	end component;
+	
+	component TimRef is
+		port (
+			clk: in std_logic;   -- Pin connected to P11 (N14)
+			clk_2Hz: out std_logic  -- Can check it using PIN A8 - LEDR0
+		);
+	end component;
+	
 
 	component Counter4bits is 
     port(
@@ -32,21 +41,36 @@ architecture MicroProcessador_arch of MicroProcessador is
     S : out std_logic_vector ( 3 downto 0)
     );
 	end component;
-
 	
-	component FullAdder8bits is
-		port(	
-			Eu: in std_logic;
-			A, B: in std_logic_vector(7 downto 0);
-			Su: in std_logic;
-			Result: out std_logic_vector(7 downto 0);
-			Cout: out std_logic
-		);
-		end component;
+	component StateMachine3bits04 is 
+    port(
+    clk, reset : in std_logic;
+	 State : out std_logic_vector ( 4 downto 0);
+	 CLKout : out std_logic
+    );
+	end component;
+	
+	component InstructionDecoder is 
+	port ( 
+		instruction: in std_logic_vector( 3 downto 0);
+		LOAD, ADDER, SUBT, ANDlogic, XORlogic, ORlogic: out std_logic
+	); 	 
+	end component;
+	
+	
+	component ArithmeticUnit is 
+	port(
+       CLK:  in std_logic;
+		Acu, Registe : in std_logic_vector( 7 downto 0); --- Acu is from Acuumulator and Registe Registeistrator
+		LOAD, ADDER, SUBT, ANDlogic, XORlogic, ORlogic: in std_logic;
+		Result: out std_logic_vector(7 downto 0)
+	);
+	end component;
 		
 		
-		component ram IS
-	PORT(
+	component RamMicro IS
+	PORT
+	(
 		address		: IN STD_LOGIC_VECTOR (3 DOWNTO 0);
 		clock		: IN STD_LOGIC  := '1';
 		data		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
@@ -63,42 +87,80 @@ architecture MicroProcessador_arch of MicroProcessador is
 		clock		: IN STD_LOGIC  := '1';
 		q		: OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
 	);
-END component;
+	END component;
 
 	component SaveStay is 
     port(
-    clk, stop : in std_logic;
-    s : out std_logic
+		clk, stop : in std_logic;
+		s : out std_logic
     );
 	end component;
+	
 
+	component AccumulatorFFD is
+	port(
+    clk, reset: in std_logic;
+    d: in std_logic_vector(7 downto 0);
+    q: out std_logic_vector(7 downto 0)
+	  );
+	end component;
 
 -- ================COMPONENT--END==================================--
-
-signal sCounter : std_logic_vector(2 downto 0);
-signal sAdress : std_logic_vector(3 downto 0);
-signal sRom : std_logic_vector( 15 downto 0);
---signal sAdressRom : std_logic_vector (4 downto 0);
-signal CLKstop : std_logic;
-signal Cp,Ep,Lm,CE, Li, Ei,La,Ea,Su,Eu,Lb,Lo, HALT: std_logic;
-signal RAMoutput: std_logic_vector (7 downto 0);
---BEGIN--
+	signal sState: std_logic_vector(4 downto 0);
+	signal sAdressRom : std_logic_vector(3 downto 0);
+	signal sRom : std_logic_vector( 15 downto 0);
+	--signal sAdressRomRom : std_logic_vector (4 downto 0);
+	signal CLKstop : std_logic;
+	signal RAMoutput: std_logic_vector (7 downto 0);
+	signal data, outUnitArith, outRam, outRegisterRom, outRegisterRam: std_logic_vector (7 downto 0);
+	signal instruction, adress : std_logic_vector (3 downto 0);
+	signal CLKtiming : std_logic;
+	signal CLKsave, CLKstatemachine : std_logic;
+	signal LOAD, ADDER, SUBT, ANDlogic, XORlogic, ORlogic : std_logic;
+	
+	
+	
+	--BEGIN--
 	begin
 	
 	-- =========PROGRAM COUNTER================== --
-	saveState : saveStay port map ( CLKboard, STOPboard, CLKstop);
-	CouterState: Counter3bits06 port map( CLKstop, RESETboard, sCounter);
-	CouterAdress:Counter4bits port map(sCounter(2), RESETboard, sAdress);
-	Hex0counter <= sAdress; 
-	RomMemory : ROMoneport port map( sAdress, sCounter(2), sRom);
+	timingReference : TimRef port map (CLKboard, CLKtiming );
+
+	saveState : saveStay port map ( CLKtiming , STOPboard, CLKsave);
 	
+	CouterState: StateMachine3bits04 port map( CLKsave, RESETboard, sState, CLKstatemachine ); 
+	
+	CouterAdress:Counter4bits port map(CLKstatemachine, RESETboard, sAdressRom);
+	
+	-- =========PROGRAM EXECUTION ================== --
+	RomMemory : ROMoneport port map( sAdressRom, sState(0), sRom);
+	
+	instruction <= sRom(15 downto 12);
+	adress<= sRom(11 downto 8);
+	data <= sRom(7 downto 0);
+	
+	InstructioDecoder1: InstructionDecoder port map ( instruction, LOAD, ADDER, SUBT, ANDlogic, XORlogic, ORlogic);  
+	
+	
+	ramPROJECT : RamMicro port map ( adress, sState(1), outUnitArith, sState(4), outRam);
 
-	Hex1instruction<= sRom(15 downto 12);
-	Hex2adress<= sRom(11 downto 8);
-	Hex3data0 <= sRom(7 downto 4);
-	Hex4data1<= sRom(3 downto 0);
+	register0 : AccumulatorFFD port map( sState(2), '1', outRam, outRegisterRam);
+	register1 : AccumulatorFFD port map( sState(2), '1', data, outRegisterRom);
+	
+	UnitArithmetic1 : ArithmeticUnit port map ( sState(3), outRegisterRom, outRegisterRam, LOAD, ADDER, SUBT, ANDlogic, XORlogic, ORlogic, outUnitArith);
+																													
+	disp0Rom : ConversorDisplay7seg port map ( outRegisterRom( 3 downto 0), Hex0Rom ); 
+	disp1Rom : ConversorDisplay7seg port map ( outRegisterRom( 7 downto 4), Hex1Rom);
+	
+	disp2Ram : ConversorDisplay7seg port map ( outRam(3 downto 0), Hex2Ram); 
+	disp3Ram : ConversorDisplay7seg port map ( outRam(7 downto 4), Hex3Ram); 
+	
+	disp4Arithmetic : ConversorDisplay7seg port map ( outUnitArith(3 downto 0), Hex4Arithmetic);
+	disp6Arithmetic : ConversorDisplay7seg port map ( outUnitArith(7 downto 4), Hex5Arithmetic);
+	
+	LEDcounter <= sAdressRom;
+	
+	LEDinstruction <= instruction;
 
-	-- Hex4accumulator0 sRom(3 downto 0);
-	-- Hex5accumulator1 sRom(3 downto 0);
 	
 end MicroProcessador_arch;

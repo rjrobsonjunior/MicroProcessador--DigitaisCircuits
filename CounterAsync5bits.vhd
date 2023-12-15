@@ -2,14 +2,14 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity Counter4bits is 
+entity CounterAsync5bits is 
     port(
     clk, reset : in std_logic;
-    S : out std_logic_vector ( 3 downto 0) := "0000"
+    S : out std_logic_vector ( 4 downto 0) := "00000"
     );
-end Counter4bits;
+end CounterAsync5bits;
 
-architecture Counter4bits_arch of Counter4bits is 
+architecture CounterAsync5bits_arch of CounterAsync5bits is 
 
 	component tff is 
 	port    (
@@ -18,13 +18,13 @@ architecture Counter4bits_arch of Counter4bits is
 	);
 	end component;
  
-	signal Ti_Qiis  : std_logic_vector (4 downto 0);
-	signal Q_s : std_logic_vector (3 downto 0);
+	signal Ti_Qiis  : std_logic_vector (5 downto 0);
+	signal Q_s : std_logic_vector (4 downto 0);
 	signal clk_s  : std_logic ;
 	
 	begin
 	
-		gen00:for i in 0 to 3 generate
+		gen00:for i in 0 to 4 generate
 		
 			a00: tff
 			port map	(
@@ -39,4 +39,4 @@ architecture Counter4bits_arch of Counter4bits is
 		Ti_Qiis(0)<= not clk_s;
 		S<=Q_s;
 		clk_s<=clk;
-	end Counter4bits_arch;
+	end CounterAsync5bits_arch;

@@ -4,14 +4,14 @@ use ieee.std_logic_unsigned.all;
 
 entity RingCounter is
 Port (  CLK: in std_logic;
-        T: inout std_logic_vector (5 downto 0):= "100000" );
-end Ringcounter;
+        T: inout std_logic_vector (6 downto 1):= "100000" );
+end ring_counter;
 
 architecture RingCounter_arch of RingCounter is
 
 begin
 
-    process(CLK)
+    process
         begin
             if (CLK = '1' and CLK'event) then
                 if T = "000001" then

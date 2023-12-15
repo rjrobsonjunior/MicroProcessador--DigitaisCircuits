@@ -2,24 +2,24 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity XORoperation is
+entity ORoperation is
     port (
         A, B: in std_logic_vector(7 downto 0);
         Result: out std_logic_vector(7 downto 0)
     );
-end entity XORoperation;
+end entity ORoperation;
 
-architecture arch_XORoperation of XORoperation is
+architecture arch_ORoperation of ORoperation is
 
     signal C: std_logic_vector(7 downto 0);
 begin
 
 	aa: for i in 0 to 7 loop generate
-		C(i) <= B(i) xor A(i);
+		C(i) <= B(i) or A(i);
 	end loop aa;
 
 
 	Result <= C;
 
 
-end arch_XORoperation;
+end arch_ORoperation;
